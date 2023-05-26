@@ -1,4 +1,6 @@
 using BookWebApp.Data;
+using BookWebApp.Data.Services;
+using BookWebApp.Data.Services.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -29,6 +31,22 @@ namespace BookWebApp
             {
                 options.UseSqlServer(Configuration.GetConnectionString("Default"));
             });
+
+            //Configure services
+            services.AddScoped<IBookCategoryService, BookCategoryService>();
+            services.AddScoped<IBookCategoryService, BookCategoryService>();
+            services.AddScoped<IBookDataService, BookDataService>();
+            services.AddScoped<IBookInfoService, BookInfoService>();
+            services.AddScoped<IBookService, BookService>();
+            services.AddScoped<ICartItemService, CartItemService>();
+            services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<IInventoryItemService, InventoryItemService>();
+            services.AddScoped<IUserCartService, UserCartService>();
+            services.AddScoped<IUserInventoryService, UserInventoryService>();
+            services.AddScoped<IUserService, UserService>();
+
+            services.AddSession();
+
             services.AddControllersWithViews();
         }
 
@@ -46,6 +64,7 @@ namespace BookWebApp
                 app.UseHsts();
             }
             app.UseHttpsRedirection();
+            app.UseSession();
             app.UseStaticFiles();
 
             app.UseRouting();

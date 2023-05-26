@@ -20,6 +20,8 @@ namespace BookWebApp.Data.Services
 
         public async Task DeleteAsync(int id)
         {
+            InventoryItemService iiServ = new InventoryItemService(_context);
+            await iiServ.DeleteByInventoryIdAsync(id);
             var entity = await _context.UserInventory.FirstOrDefaultAsync(e => e.Id == id);
             _context.UserInventory.Remove(entity);
             await _context.SaveChangesAsync();
@@ -34,6 +36,12 @@ namespace BookWebApp.Data.Services
         public async Task<UserInventory> GetByIdAsync(int id)
         {
             var entity = await _context.UserInventory.FirstOrDefaultAsync(e => e.Id == id);
+            return entity;
+        }
+
+        public async Task<UserInventory> GetByUserIdAsync(int id)
+        {
+            var entity = await _context.UserInventory.FirstOrDefaultAsync(e => e.UserId == id);
             return entity;
         }
 

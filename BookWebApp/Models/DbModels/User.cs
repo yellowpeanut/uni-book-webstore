@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -19,13 +20,13 @@ namespace BookWebApp.Models
 
         [Key]
         public int Id { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Данное поле обязательно для заполнения")]
         [StringLength(64)]
         public string Username { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Данное поле обязательно для заполнения")]
         [StringLength(32)]
         public string Password { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Данное поле обязательно для заполнения")]
         [StringLength(64)]
         public string Email { get; set; }
         public int Balance { get; set; }

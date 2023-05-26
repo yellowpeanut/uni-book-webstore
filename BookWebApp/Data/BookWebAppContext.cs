@@ -101,6 +101,12 @@ namespace BookWebApp.Data
                     .HasConstraintName("FK_InventoryItem_UserInventory");
             });
 
+            modelBuilder.Entity<User>(entity =>
+            {
+                entity.HasIndex(d => d.Email)
+                    .IsUnique();
+            });
+
             modelBuilder.Entity<UserCart>(entity =>
             {
                 entity.HasOne(d => d.User)

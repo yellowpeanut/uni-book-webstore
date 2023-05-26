@@ -19,6 +19,12 @@ namespace BookWebApp.Data.Services
             await _context.SaveChangesAsync();
         }
 
+        public async Task AddRangeAsync(IEnumerable<BookCategory> bookCategories)
+        {
+            await _context.BookCategory.AddRangeAsync(bookCategories);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task DeleteAsync(int bookId, int categoryId)
         {
             var entity = await _context.BookCategory.FirstOrDefaultAsync(e => e.BookId == bookId && e.CategoryId == categoryId);

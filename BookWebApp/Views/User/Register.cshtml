@@ -1,0 +1,21 @@
+﻿@model BookWebApp.Models.User
+
+<form class="" method="post" action="Register">
+    <fieldset class="">
+        <legend class="text-black">Регистрация</legend>
+        <div class="">
+            <label for="" class="form-label mt-4">Ваше имя</label>
+            <input type="text" class="form-control w-50" placeholder="" asp-for="Username">
+        </div>
+        <div class="">
+            <label for="" class="form-label mt-4">Пароль</label>
+            <input type="password" class="form-control w-50" placeholder="" asp-for="Password">
+        </div>
+        <div class="">
+            <label for="" class="form-label mt-4">Адрес электронной почты</label>
+            <input type="email" class="form-control w-50" placeholder="" asp-for="Email">
+        </div>
+        <button type="submit" class="btn btn-primary mt-4">Зарегистрироваться</button>
+    </fieldset>
+</form>
+

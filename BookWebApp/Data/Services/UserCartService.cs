@@ -21,6 +21,8 @@ namespace BookWebApp.Data.Services
 
         public async Task DeleteAsync(int id)
         {
+            CartItemService ciServ = new CartItemService(_context);
+            await ciServ.DeleteByCartIdAsync(id);
             var entity = await _context.UserCart.FirstOrDefaultAsync(e => e.Id == id);
             _context.UserCart.Remove(entity);
             await _context.SaveChangesAsync();
@@ -35,6 +37,12 @@ namespace BookWebApp.Data.Services
         public async Task<UserCart> GetByIdAsync(int id)
         {
             var entity = await _context.UserCart.FirstOrDefaultAsync(e => e.Id == id);
+            return entity;
+        }
+
+        public async Task<UserCart> GetByUserIdAsync(int id)
+        {
+            var entity = await _context.UserCart.FirstOrDefaultAsync(e => e.UserId == id);
             return entity;
         }
 

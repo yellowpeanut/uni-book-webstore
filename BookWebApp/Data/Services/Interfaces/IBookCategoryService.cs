@@ -11,6 +11,7 @@ namespace BookWebApp.Data.Services.Interfaces
         Task<IEnumerable<BookCategory>> GetByBookIdAsync(int id);
         Task<IEnumerable<BookCategory>> GetByCategoryIdAsync(int id);
         Task AddAsync(BookCategory bookCategory);
+        Task AddRangeAsync(IEnumerable<BookCategory> bookCategories);
         //Task<BookCategory> UpdateAsync(int bookId, int categoryId, BookCategory newBookCategory);
         Task DeleteAsync(int bookId, int categoryId);
         Task DeleteByBookIdAsync(int id);
