@@ -1,6 +1,9 @@
 ﻿@model BookWebApp.Models.User
 
-<form class="" method="post" action="Register">
+@{
+
+}
+<form class="" method="post" asp-controller="User" asp-action="Register">
     <fieldset class="">
         <legend class="text-black">Регистрация</legend>
         <div class="">
@@ -18,4 +21,4 @@
         <button type="submit" class="btn btn-primary mt-4">Зарегистрироваться</button>
     </fieldset>
 </form>
-
+<p class="mt-4 text-danger">@ViewBag.Message</p>

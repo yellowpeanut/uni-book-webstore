@@ -1,5 +1,7 @@
 ﻿@model BookWebApp.Models.User
+@{
 
+}
 <form class="" method="post" asp-controller="User" asp-action="Login">
     <fieldset class="">
         <legend class="text-black">Вход</legend>
@@ -14,3 +16,4 @@
         <button type="submit" class="btn btn-primary mt-4">Войти</button>
     </fieldset>
 </form>
+<p class="mt-4 text-danger">@ViewBag.Message</p>

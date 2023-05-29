@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json;
 
 // Code scaffolded by EF Core assumes nullable reference types (NRTs) are not used or disabled.
 // If you have enabled NRTs for your project, then un-comment the following line:
@@ -35,5 +36,17 @@ namespace BookWebApp.Models
         public virtual ICollection<UserCart> UserCart { get; set; }
         [InverseProperty("User")]
         public virtual ICollection<UserInventory> UserInventory { get; set; }
+
+        public string Serialize()
+        {
+            var data = JsonSerializer.Serialize(this);
+            return data;
+        }
+
+        public static User Deserialize(string user)
+        {
+            var data = JsonSerializer.Deserialize<User>(user);
+            return data;
+        }
     }
 }

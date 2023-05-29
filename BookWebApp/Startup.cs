@@ -45,7 +45,12 @@ namespace BookWebApp
             services.AddScoped<IUserInventoryService, UserInventoryService>();
             services.AddScoped<IUserService, UserService>();
 
-            services.AddSession();
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromHours(12);
+/*                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;*/
+            });
 
             services.AddControllersWithViews();
         }
