@@ -22,7 +22,7 @@ namespace BookWebApp.Data
 
         public virtual DbSet<Book> Book { get; set; }
         public virtual DbSet<BookCategory> BookCategory { get; set; }
-        public virtual DbSet<BookInfo> BookInfo { get; set; }
+        //public virtual DbSet<BookInfo> BookInfo { get; set; }
         public virtual DbSet<CartItem> CartItem { get; set; }
         public virtual DbSet<Category> Category { get; set; }
         public virtual DbSet<InventoryItem> InventoryItem { get; set; }
@@ -43,13 +43,13 @@ namespace BookWebApp.Data
         {
             modelBuilder.Entity<BookCategory>(entity =>
             {
-                entity.HasNoKey();
+                entity.HasKey(d => new {d.BookId, d.CategoryId});
 
                 entity.HasOne(d => d.Book)
                     .WithMany()
                     .HasForeignKey(d => d.BookId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_BookCategory_BookInfo");
+                    .HasConstraintName("FK_BookCategory_Book");
 
                 entity.HasOne(d => d.Category)
                     .WithMany()
@@ -58,7 +58,7 @@ namespace BookWebApp.Data
                     .HasConstraintName("FK_BookCategory_Category");
             });
 
-            modelBuilder.Entity<BookInfo>(entity =>
+/*            modelBuilder.Entity<BookInfo>(entity =>
             {
                 entity.HasNoKey();
 
@@ -69,7 +69,7 @@ namespace BookWebApp.Data
                     .HasForeignKey<BookInfo>(d => d.BookId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_BookInfo_Book");
-            });
+            });*/
 
             modelBuilder.Entity<CartItem>(entity =>
             {

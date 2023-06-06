@@ -6,16 +6,16 @@ namespace BookWebApp.Controllers
 {
     public class TestController : Controller
     {
-        public readonly IUserService _service;
-        public TestController(IUserService service)
+        public readonly IBookCategoryService _service;
+        public TestController(IBookCategoryService service)
         {
             _service = service;
         }
 
         public async Task<IActionResult> Index()
         {
-            await _service.GetAllAsync();
-            return View();
+            var data = await _service.GetAllAsync();
+            return View(data);
         }
     }
 }

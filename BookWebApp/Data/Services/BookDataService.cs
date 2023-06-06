@@ -1,4 +1,5 @@
 ﻿using BookWebApp.Models;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,83 +15,44 @@ namespace BookWebApp.Data.Services
         }
         public async Task AddAsync(BookData bookData)
         {
-            Book book = new Book()
-            {
-                Id = bookData.Id,
-                Price = bookData.Price,
-                StorageQuantity = bookData.StorageQuantity,
-                SoldQuantity = bookData.SoldQuantity,
-                Rating = bookData.Rating
-            };
-            BookInfo bookInfo = new BookInfo()
-            {
-                BookId = bookData.Id,
-                Author = bookData.Author,
-                Title = bookData.Title,
-                ReleaseYear = bookData.ReleaseYear,
-                Image = bookData.Image,
-                Book = book
-            };
-            IEnumerable<BookCategory> bookCategories = new List<BookCategory>() { };
-            foreach (var category in bookData.Categories) 
-            {
-                bookCategories.Append(new BookCategory()
-                {
-                    BookId = bookData.Id,
-                    CategoryId = category.Id,
-                    Book = book,
-                    Category = category
-                });
-            }
             BookService bServ = new BookService(_context);
-            BookInfoService biServ = new BookInfoService(_context);
-            BookCategoryService bcServ = new BookCategoryService(_context);
-            await bServ.AddAsync(book);
-            await biServ.AddAsync(bookInfo);
-            await bcServ.AddRangeAsync(bookCategories);
-            await _context.SaveChangesAsync();
+            if (bookData.Categories.Count() > 0)
+                await bServ.AddWithCategoriesAsync(bookData.Book, bookData.Categories);
+            else
+                await bServ.AddWithCategoriesAsync(bookData.Book, bookData.CategoryValues);
+        }
+
+        public async Task AddRangeAsync(IEnumerable<BookData> bookData)
+        {
+            foreach (var bd in bookData)
+            {
+                await AddAsync(bd);
+            }
         }
 
         public async Task DeleteAsync(int id)
         {
             BookService bServ = new BookService(_context);
-            BookInfoService biServ = new BookInfoService(_context);
-            BookCategoryService bcServ = new BookCategoryService(_context);
-            await bcServ.DeleteByBookIdAsync(id);
-            await biServ.DeleteAsync(id);
             await bServ.DeleteAsync(id);
-            await _context.SaveChangesAsync();
         }
 
         public async Task<IEnumerable<BookData>> GetAllAsync()
         {
             BookService bServ = new BookService(_context);
-            BookInfoService biServ = new BookInfoService(_context);
             BookCategoryService bcServ = new BookCategoryService(_context);
             List<Book> books = (await bServ.GetAllAsync()).ToList();
-            List<BookInfo> bookInfos = (await biServ.GetAllAsync()).ToList();
             IEnumerable<BookCategory> bookCategories = await bcServ.GetAllAsync();
             IEnumerable<Category> categories;
-            IEnumerable<BookData> entities = new List<BookData>() {};
-            for (int i = 0; i < books.Count(); i++)
+            IEnumerable<BookData> entities = new List<BookData>() { };
+            foreach (var book in books)
             {
-                categories = bookCategories.Where(e => e.BookId == books[i].Id)
+                categories = bookCategories.Where(e => e.BookId == book.Id)
                     .Select(x => x.Category);
-                BookData bookData = new BookData()
-                {
-                    Id = books[i].Id,
-                    Price = books[i].Price,
-                    StorageQuantity = books[i].StorageQuantity,
-                    SoldQuantity = books[i].SoldQuantity,
-                    Rating = books[i].Rating,
-                    Author = bookInfos[i].Author,
-                    Title = bookInfos[i].Title,
-                    ReleaseYear = bookInfos[i].ReleaseYear,
-                    Image = bookInfos[i].Image,
-                    Categories = categories,
-                    CategoryValues = categories.Select(e => e.Value)
-                };
-                entities.Append(bookData);
+                entities.Append(new BookData(
+                    book,
+                    categories.Select(e => e.Value),
+                    categories
+                    ));
             }
             return entities;
         }
@@ -98,24 +60,13 @@ namespace BookWebApp.Data.Services
         public async Task<BookData> GetByIdAsync(int id)
         {
             BookService bServ = new BookService(_context);
-            BookInfoService biServ = new BookInfoService(_context);
             Book book = await bServ.GetByIdAsync(id);
-            BookInfo bookInfo = await biServ.GetByIdAsync(id);
             IEnumerable<Category> categories = await bServ.GetCategoriesAsync(id);
-            BookData bookData = new BookData()
-            {
-                Id = book.Id,
-                Price = book.Price,
-                StorageQuantity = book.StorageQuantity,
-                SoldQuantity = book.SoldQuantity,
-                Rating = book.Rating,
-                Author = bookInfo.Author,
-                Title = bookInfo.Title,
-                ReleaseYear = bookInfo.ReleaseYear,
-                Image = bookInfo.Image,
-                Categories = categories,
-                CategoryValues = categories.Select(e => e.Value)
-            };
+            BookData bookData = new BookData(
+                book,
+                categories.Select(e => e.Value),
+                categories);
+
             return bookData;
         }
 
@@ -129,26 +80,25 @@ namespace BookWebApp.Data.Services
         public async Task<BookData> UpdateAsync(int id, BookData newBookData)
         {
             BookService bServ = new BookService(_context);
-            BookInfoService biServ = new BookInfoService(_context);
-            Book book = new Book()
+            BookCategoryService bcServ = new BookCategoryService(_context);
+
+            await bServ.UpdateAsync(id, newBookData.Book);
+            var categories = await bServ.GetCategoriesAsync(id);
+            if (!Enumerable.SequenceEqual(categories, newBookData.Categories))
             {
-                Id = newBookData.Id,
-                Price = newBookData.Price,
-                StorageQuantity = newBookData.StorageQuantity,
-                SoldQuantity = newBookData.SoldQuantity,
-                Rating = newBookData.Rating
-            };
-            BookInfo bookInfo = new BookInfo()
-            {
-                BookId = newBookData.Id,
-                Author = newBookData.Author,
-                Title = newBookData.Title,
-                ReleaseYear = newBookData.ReleaseYear,
-                Image = newBookData.Image,
-                Book = book
-            };
-            await bServ.UpdateAsync(id, book);
-            await biServ.UpdateAsync(id, bookInfo);
+                await bcServ.DeleteByBookIdAsync(id);
+                foreach (var cat in newBookData.Categories)
+                {
+                    await bcServ.AddAsync(new BookCategory()
+                    {
+                        BookId = id,
+                        Book = newBookData.Book,
+                        CategoryId = cat.Id,
+                        Category = cat
+                    });
+                }
+            }
+
             return newBookData;
         }
     }

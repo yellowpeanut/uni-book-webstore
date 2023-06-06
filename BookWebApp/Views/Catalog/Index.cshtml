@@ -1,4 +1,4 @@
-﻿@model IEnumerable<BookWebApp.Models.BookData>
+﻿@model IEnumerable<BookWebApp.Models.Book>
 @{
     
 }
@@ -13,25 +13,25 @@
 <div class="mt-5">
     @foreach(var book in Model)
     {
-        <div class="d-inline-flex w-100 border-secondary border-1">
-            <div>
-                <img href="@book.Image" w-100>
+        <div class="d-inline-flex w-100 border-bottom border-1 mb-4">
+            <div class="">
+                <img src="@book.Image">
             </div>
-            <div>
+            <div class="p-5 d-flex flex-column">
                 <div>
-                    <p>@book.Title</p>
+                    <p class="text-primary">@book.Title</p>
                 </div>
                 <div>
-                    <p>@book.Author | @book.ReleaseYear</p>
+                    <p>@book.Author | @book.Rating/10</p>
                 </div>
                 <div>
-                    <p>@book.Rating/10</p>
+                    <!-- foreach(var c in Model) -->
                 </div>
                 <div>
                     <p>@book.Price рублей</p>
                 </div>
                 <div>
-                    <button class="btn btn-success">
+                    <button class="btn btn-success small">
                         В корзину
                     </button>
                 </div>

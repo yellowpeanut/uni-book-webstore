@@ -10,6 +10,8 @@ namespace BookWebApp.Data.Services.Interfaces
         Task<Book> GetByIdAsync(int id);
         Task<IEnumerable<Category>> GetCategoriesAsync(int id);
         Task AddAsync(Book book);
+        Task AddWithCategoriesAsync(Book book, IEnumerable<string> categoryValues);
+        Task AddWithCategoriesAsync(Book book, IEnumerable<Category> categories);
         Task<Book> UpdateAsync(int id, Book newBook);
         Task DeleteAsync(int id);
     }

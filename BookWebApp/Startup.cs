@@ -36,7 +36,7 @@ namespace BookWebApp
             services.AddScoped<IBookCategoryService, BookCategoryService>();
             services.AddScoped<IBookCategoryService, BookCategoryService>();
             services.AddScoped<IBookDataService, BookDataService>();
-            services.AddScoped<IBookInfoService, BookInfoService>();
+            //services.AddScoped<IBookInfoService, BookInfoService>();
             services.AddScoped<IBookService, BookService>();
             services.AddScoped<ICartItemService, CartItemService>();
             services.AddScoped<ICategoryService, CategoryService>();
@@ -56,7 +56,7 @@ namespace BookWebApp
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public async void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -82,6 +82,7 @@ namespace BookWebApp
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
+            await DbInitializer.SeedAsync(app);
         }
     }
 }

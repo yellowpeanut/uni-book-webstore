@@ -47,6 +47,12 @@ namespace BookWebApp.Data.Services
             return entity;
         }
 
+        public async Task<Category> GetByValueAsync(string value)
+        {
+            var entity = await _context.Category.FirstOrDefaultAsync(e => e.Value == value);
+            return entity;
+        }
+
         public async Task<Category> UpdateAsync(int id, Category newCategory)
         {
             _context.Category.Update(newCategory);

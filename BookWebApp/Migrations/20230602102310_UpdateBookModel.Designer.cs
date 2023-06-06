@@ -4,6 +4,7 @@ using BookWebApp.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookWebApp.Migrations
 {
     [DbContext(typeof(BookWebAppContext))]
-    partial class BookWebAppContextModelSnapshot : ModelSnapshot
+    [Migration("20230602102310_UpdateBookModel")]
+    partial class UpdateBookModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -44,8 +46,8 @@ namespace BookWebApp.Migrations
                     b.Property<int?>("Rating")
                         .HasColumnType("int");
 
-                    b.Property<float?>("ReleaseYear")
-                        .HasColumnType("real");
+                    b.Property<int?>("ReleaseYear")
+                        .HasColumnType("int");
 
                     b.Property<int>("SoldQuantity")
                         .HasColumnType("int");
@@ -71,7 +73,7 @@ namespace BookWebApp.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
-                    b.HasKey("BookId", "CategoryId");
+                    b.HasIndex("BookId");
 
                     b.HasIndex("CategoryId");
 

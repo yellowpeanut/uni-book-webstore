@@ -19,6 +19,14 @@ namespace BookWebApp.Models
 
         [Key]
         public int Id { get; set; }
+        [Required]
+        [StringLength(50)]
+        public string Author { get; set; }
+        [Required]
+        [StringLength(255)]
+        public string Title { get; set; }
+        public float? ReleaseYear { get; set; }
+        public string Image { get; set; }
         public int Price { get; set; }
         public int StorageQuantity { get; set; }
         public int SoldQuantity { get; set; }

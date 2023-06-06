@@ -2,14 +2,14 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace BookWebApp.Controllers
 {
-    [AllowAnonymous]
     public class CatalogController : Controller
     {
-        public readonly IBookDataService _service;
-        public CatalogController(IBookDataService service)
+        public readonly IBookService _service;
+        public CatalogController(IBookService service)
         {
             _service = service;
         }
@@ -17,6 +17,7 @@ namespace BookWebApp.Controllers
         public async Task<IActionResult> Index()
         {
             var data = await _service.GetAllAsync();
+            Debug.WriteLine(data);
             return View(data);
         }
     }
