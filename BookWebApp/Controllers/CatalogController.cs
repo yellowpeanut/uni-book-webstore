@@ -8,8 +8,8 @@ namespace BookWebApp.Controllers
 {
     public class CatalogController : Controller
     {
-        public readonly IBookService _service;
-        public CatalogController(IBookService service)
+        public readonly IBookDataService _service;
+        public CatalogController(IBookDataService service)
         {
             _service = service;
         }

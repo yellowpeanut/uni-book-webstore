@@ -37,15 +37,18 @@ namespace BookWebApp.Data.Services
                 if (await catServ.GetByValueAsync(v) == null)
                     await catServ.AddAsync(new Category() { Value = v });
                 cat = await catServ.GetByValueAsync(v);
-                bcList.Append(new BookCategory()
+                BookCategory bc = new BookCategory()
                 {
                     BookId = book.Id,
                     CategoryId = cat.Id,
                     Book = book,
                     Category = cat
-                });
+                };
+                bcList.Add(bc);
             }
             await bcServ.AddRangeAsync(bcList);
+            var ctest = await bcServ.GetByBookIdAsync(book.Id);
+            var ctest2 = await bcServ.GetAllAsync();
         }
 
         public async Task AddWithCategoriesAsync(Book book, IEnumerable<Category> categories)

@@ -40,19 +40,23 @@ namespace BookWebApp.Data.Services
         {
             BookService bServ = new BookService(_context);
             BookCategoryService bcServ = new BookCategoryService(_context);
-            List<Book> books = (await bServ.GetAllAsync()).ToList();
-            IEnumerable<BookCategory> bookCategories = await bcServ.GetAllAsync();
-            IEnumerable<Category> categories;
-            IEnumerable<BookData> entities = new List<BookData>() { };
+            // List<Book> books = (await bServ.GetAllAsync()).ToList();
+            // var bookCategories = await bcServ.GetAllAsync();
+            List<Book> books = await _context.Book.ToListAsync();
+            List<Category> categories = await _context.Category.ToListAsync();
+            List<BookCategory> bookCategories = await _context.BookCategory.ToListAsync();
+            List<Category> cats;
+            List<BookData> entities = new List<BookData>() { };
             foreach (var book in books)
             {
-                categories = bookCategories.Where(e => e.BookId == book.Id)
-                    .Select(x => x.Category);
-                entities.Append(new BookData(
+                cats = bookCategories.Where(e => e.BookId == book.Id)
+                    .Select(x => x.Category).ToList();
+                BookData bdata = new BookData(
                     book,
-                    categories.Select(e => e.Value),
-                    categories
-                    ));
+                    cats.Select(e => e.Value).ToList(),
+                    cats
+                    );
+                entities.Add(bdata);
             }
             return entities;
         }

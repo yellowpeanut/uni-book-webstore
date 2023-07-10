@@ -51,6 +51,7 @@ namespace BookWebApp.Data
                         await context.SaveChangesAsync();
                     }
                 }
+                // var ctest = context.BookCategory.ToList();
 /*                if (!context.BookCategory.Any())
                 {
                     var bServ = new BookService(context);

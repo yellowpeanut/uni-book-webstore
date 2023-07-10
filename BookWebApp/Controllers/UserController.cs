@@ -28,7 +28,7 @@ namespace BookWebApp.Controllers
             }
         }
 
-            public IActionResult Register()
+        public IActionResult Register()
         {
             return View();
         }
@@ -94,6 +94,32 @@ namespace BookWebApp.Controllers
             HttpContext.Session.Clear();
             return RedirectToAction("Index", "Home");
         }
+
+        public IActionResult Profile()
+        {
+            if(HttpContext.Session.GetString("User") != null)
+                return View(Models.User.Deserialize(HttpContext.Session.GetString("User")));
+            else
+                return View("Login");
+        }
+
+        public IActionResult Inventory()
+        {
+            if(HttpContext.Session.GetString("User") != null)
+                return View(Models.User.Deserialize(HttpContext.Session.GetString("User")));
+            else
+                return View("Login");
+        }
+
+        public IActionResult Cart()
+        {
+            if(HttpContext.Session.GetString("User") != null)
+                return View(Models.User.Deserialize(HttpContext.Session.GetString("User")));
+            else
+                return View("Login");
+        }
+
+
 
     }
 }
