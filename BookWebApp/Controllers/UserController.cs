@@ -1,17 +1,25 @@
 ﻿using BookWebApp.Data.Services.Interfaces;
 using BookWebApp.Models;
+using BookWebApp.Data.Enums;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using BookWebApp.ViewModels;
 
 namespace BookWebApp.Controllers
 {
     public class UserController : Controller
     {
         public readonly IUserService _service;
-        public UserController(IUserService service)
+        public readonly SignInManager<User> _signInManager;
+        public readonly UserManager<User> _userManager;
+        public UserController(IUserService service, SignInManager<User> signInManager, UserManager<User> userManager)
         {
             _service = service;
+            _signInManager = signInManager;
+            _userManager = userManager;
         }
 
         public IActionResult LoginPartial()
@@ -36,13 +44,22 @@ namespace BookWebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(User user)
         {
-            if(user.Username != null && user.Password != null && user.Email != null)
+            if(ModelState.IsValid)
             {
-                if (await _service.GetByEmailAsync(user.Email) == null)
+                if (await _userManager.FindByEmailAsync(user.Email) == null)
                 {
                     user.Balance = 0;
-                    await _service.AddAsync(user);
-                    return await Login(user);
+                    var result = await _service.AddAsync(user, Role.User, _userManager);
+                    if(result)
+                    {
+                        await _userManager.AddToRoleAsync(user, Role.User);
+                        return await Login(new LoginViewModel(){ Email = user.Email, Password = user.Password });
+                    }
+                    else
+                    {
+                        ViewBag.Message = "Произошла непредвиденная ошибка, повторите действие позже.";
+                        return View();
+                    }
                 }
                 else
                 {
@@ -60,38 +77,45 @@ namespace BookWebApp.Controllers
 
         public IActionResult Login()
         {
-            if(HttpContext.Session.GetString("User") != null)
+            /*_signInManager.IsSignedIn(ClaimsPrincipal.Current)*/
+            if(true)
                 return View();
             else
                 return View();
         }
         [HttpPost]
-        public async Task<IActionResult> Login(User user)
+        public async Task<IActionResult> Login(LoginViewModel loginUser)
         {
-            var _user = await _service.GetByEmailAsync(user.Email);
-            if(_user != null)
+            if(ModelState.IsValid)
             {
-                if(_user.Password == user.Password)
+                var _user = await _userManager.FindByEmailAsync(loginUser.Email);
+                if (_user != null)
                 {
-                    HttpContext.Session.SetString("User", _user.Serialize());                    
-                    return RedirectToAction("Index", "Home");
-                }
-                else
-                {
-                    ViewBag.Message = "Пароль введен неверно";
-                    return View();
+                    if(await _userManager.CheckPasswordAsync(_user, loginUser.Password))
+                    {
+                        var res = await _signInManager.PasswordSignInAsync(_user, loginUser.Password, false, false);
+                        if(res.Succeeded)                  
+                            return RedirectToAction("Index", "Home");
+                        else
+                        {
+                            ViewBag.Message = "Произошла непредвиденная ошибка, повторите действие позже.";
+                            return View();
+                        }
+                    }
+                    else
+                    {
+                        ViewBag.Message = "Пароль введен неверно";
+                        return View();
+                    }
                 }
             }
-            else
-            {
-                ViewBag.Message = "Пользователь с такими данными не найден";
-                return View();
-            }
+            ViewBag.Message = "Пользователь с такими данными не найден";
+            return View();
         }
 
-        public IActionResult Logout()
+        public async Task<IActionResult> Logout()
         {
-            HttpContext.Session.Clear();
+            await _signInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
         }
 

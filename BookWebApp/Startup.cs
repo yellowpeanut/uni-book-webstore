@@ -4,6 +4,7 @@ using BookWebApp.Data.Services.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -32,7 +33,7 @@ namespace BookWebApp
                 options.UseSqlServer(Configuration.GetConnectionString("Default"));
             });
 
-            //Configure services
+            // Configure services
             services.AddScoped<IBookCategoryService, BookCategoryService>();
             services.AddScoped<IBookCategoryService, BookCategoryService>();
             services.AddScoped<IBookDataService, BookDataService>();
@@ -44,6 +45,8 @@ namespace BookWebApp
             services.AddScoped<IUserCartService, UserCartService>();
             services.AddScoped<IUserInventoryService, UserInventoryService>();
             services.AddScoped<IUserService, UserService>();
+            // services.AddScoped<IRoleService, RoleService>();
+            // services.AddScoped<IUserRoleService, UserRoleService>();
 
             services.AddSession(options =>
             {
@@ -51,6 +54,33 @@ namespace BookWebApp
 /*                options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true;*/
             });
+
+            services.AddIdentity<Models.User, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = false)
+                .AddEntityFrameworkStores<BookWebAppContext>();
+            services.AddRazorPages();
+
+            services.Configure<IdentityOptions>(options =>
+            {
+                options.Password.RequireDigit = true;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequiredLength = 6;
+                options.Password.RequiredUniqueChars = 0;
+
+                options.User.AllowedUserNameCharacters =
+                "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+абвгдеёжзийклмнопрстуфхцчшщъыьэюяАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ";
+                options.User.RequireUniqueEmail = true;
+            });
+
+            services.ConfigureApplicationCookie(options =>
+            {
+                // Cookie settings
+                // options.Cookie.HttpOnly = true;
+                // options.LoginPath = "/Identity/Account/Login";
+                // options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+            });
+
 
             services.AddControllersWithViews();
         }
@@ -74,6 +104,7 @@ namespace BookWebApp
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
@@ -81,7 +112,9 @@ namespace BookWebApp
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapRazorPages();
             });
+            // app.MapRazorPages();
             await DbInitializer.SeedAsync(app);
         }
     }

@@ -6,7 +6,9 @@ using BookWebApp.Data.Services;
 using System.IO;
 using System;
 using System.Threading.Tasks;
-
+using BookWebApp.Models;
+using Microsoft.AspNetCore.Identity;
+using BookWebApp.Data.Enums;
 
 namespace BookWebApp.Data
 {
@@ -18,6 +20,16 @@ namespace BookWebApp.Data
             {
                 var context = serviceScope.ServiceProvider.GetService<BookWebAppContext>();
                 context.Database.EnsureCreated();
+
+                var roleManager = serviceScope.ServiceProvider.GetService<RoleManager<IdentityRole>>();
+                Role roleStruct = new Role();
+                var roles = roleStruct.GetType().GetFields();
+                foreach(var r in roles)
+                {
+                    string role = r.GetValue(roleStruct).ToString();
+                    if(!await roleManager.RoleExistsAsync(role))
+                        await roleManager.CreateAsync(new IdentityRole(role));
+                }
 
                 if (!context.Book.Any())
                 {
@@ -68,6 +80,18 @@ namespace BookWebApp.Data
                         });
                     }
                 }*/
+                var userManager = serviceScope.ServiceProvider.GetService<UserManager<User>>();
+                if(await userManager.FindByEmailAsync("admin@admin.com") == null)
+                {
+                    User user = new User(){
+                        UserName = "admin",
+                        Password = "admin12345",
+                        Email = "admin@admin.com"
+                    };
+                    
+                    var uServ = new UserService(context);
+                    await uServ.AddAsync(user, Role.Admin, userManager);
+                }
             }
         }
     }

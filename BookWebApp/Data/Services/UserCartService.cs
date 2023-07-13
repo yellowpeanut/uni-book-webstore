@@ -40,7 +40,7 @@ namespace BookWebApp.Data.Services
             return entity;
         }
 
-        public async Task<UserCart> GetByUserIdAsync(int id)
+        public async Task<UserCart> GetByUserIdAsync(string id)
         {
             var entity = await _context.UserCart.FirstOrDefaultAsync(e => e.UserId == id);
             return entity;

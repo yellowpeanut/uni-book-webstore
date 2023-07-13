@@ -4,6 +4,7 @@ using BookWebApp.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookWebApp.Migrations
 {
     [DbContext(typeof(BookWebAppContext))]
-    partial class BookWebAppContextModelSnapshot : ModelSnapshot
+    [Migration("20230711151850_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -274,6 +276,10 @@ namespace BookWebApp.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -290,6 +296,8 @@ namespace BookWebApp.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityRole");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -396,6 +404,21 @@ namespace BookWebApp.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("BookWebApp.Models.UserRole", b =>
+                {
+                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityRole");
+
+                    b.Property<string>("Role")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasIndex("UserId");
+
+                    b.HasDiscriminator().HasValue("UserRole");
                 });
 
             modelBuilder.Entity("BookWebApp.Models.BookCategory", b =>
@@ -526,6 +549,15 @@ namespace BookWebApp.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("BookWebApp.Models.UserRole", b =>
+                {
+                    b.HasOne("BookWebApp.Models.User", "User")
+                        .WithMany("UserRole")
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("BookWebApp.Models.Book", b =>
                 {
                     b.Navigation("CartItem");
@@ -538,6 +570,8 @@ namespace BookWebApp.Migrations
                     b.Navigation("UserCart");
 
                     b.Navigation("UserInventory");
+
+                    b.Navigation("UserRole");
                 });
 
             modelBuilder.Entity("BookWebApp.Models.UserCart", b =>

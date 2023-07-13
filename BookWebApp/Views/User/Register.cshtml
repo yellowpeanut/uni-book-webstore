@@ -1,5 +1,9 @@
 ﻿@model BookWebApp.Models.User
 
+@* @using Microsoft.AspNetCore.Identity;
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager *@
+
 @{
 
 }
@@ -8,7 +12,7 @@
         <legend class="text-black">Регистрация</legend>
         <div class="">
             <label for="" class="form-label mt-4">Ваше имя</label>
-            <input type="text" class="form-control w-50" placeholder="" asp-for="Username">
+            <input type="text" class="form-control w-50" placeholder="" asp-for="UserName">
         </div>
         <div class="">
             <label for="" class="form-label mt-4">Пароль</label>

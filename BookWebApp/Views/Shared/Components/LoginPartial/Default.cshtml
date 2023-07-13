@@ -1,12 +1,17 @@
 ﻿@model BookWebApp.Models.User
+
+@using Microsoft.AspNetCore.Identity;
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+    
 @{
     Layout = null;
 }
 
-@if(Model.Username != null){
+@if(SignInManager.IsSignedIn(User)){
     <div class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            @Model.Username
+            @UserManager.GetUserName(User)
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
             <a class="dropdown-item" asp-controller="User" asp-action="Profile">Профиль</a>

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -11,31 +12,32 @@ using System.Text.Json;
 
 namespace BookWebApp.Models
 {
-    public partial class User
+    public partial class User : IdentityUser
     {
         public User()
         {
             UserCart = new HashSet<UserCart>();
             UserInventory = new HashSet<UserInventory>();
+            // UserRole = new HashSet<UserRole>();
         }
 
-        [Key]
-        public int Id { get; set; }
         [Required(ErrorMessage = "Данное поле обязательно для заполнения")]
         [StringLength(64)]
-        public string Username { get; set; }
+        public override string UserName { get; set; }
         [Required(ErrorMessage = "Данное поле обязательно для заполнения")]
         [StringLength(32)]
         public string Password { get; set; }
         [Required(ErrorMessage = "Данное поле обязательно для заполнения")]
         [StringLength(64)]
-        public string Email { get; set; }
+        public override string Email { get; set; }
         public int Balance { get; set; }
 
         [InverseProperty("User")]
         public virtual ICollection<UserCart> UserCart { get; set; }
         [InverseProperty("User")]
         public virtual ICollection<UserInventory> UserInventory { get; set; }
+        // [InverseProperty("User")]
+        // public virtual ICollection<UserRole> UserRole { get; set; }
 
         public string Serialize()
         {

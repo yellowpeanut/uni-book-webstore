@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using BookWebApp.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+
 
 // Code scaffolded by EF Core assumes nullable reference types (NRTs) are not used or disabled.
 // If you have enabled NRTs for your project, then un-comment the following line:
@@ -9,7 +11,7 @@ using BookWebApp.Models;
 
 namespace BookWebApp.Data
 {
-    public partial class BookWebAppContext : DbContext
+    public partial class BookWebAppContext : IdentityDbContext<Models.User>
     {
         public BookWebAppContext()
         {
@@ -29,6 +31,8 @@ namespace BookWebApp.Data
         public virtual DbSet<User> User { get; set; }
         public virtual DbSet<UserCart> UserCart { get; set; }
         public virtual DbSet<UserInventory> UserInventory { get; set; }
+        // public virtual DbSet<Role> Role { get; set; }
+        // public virtual DbSet<UserRole> UserRole { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -125,7 +129,25 @@ namespace BookWebApp.Data
                     .HasConstraintName("FK_UserInventory_User");
             });
 
+            // modelBuilder.Entity<UserRole>(entity =>
+            // {
+            //     // entity.HasOne(d => d.User)
+            //     //     .WithMany()
+            //     //     .HasForeignKey(d => d.UserId)
+            //     //     .OnDelete(DeleteBehavior.ClientSetNull)
+            //     //     .HasConstraintName("FK_UserRole_User")
+            //     //     .IsRequired();
+
+            //     // entity.HasOne(d => d.Role)
+            //     //     .WithMany()
+            //     //     .HasForeignKey(d => d.RoleId)
+            //     //     .OnDelete(DeleteBehavior.ClientSetNull)
+            //     //     .HasConstraintName("FK_UserRole_Role")
+            //     //     .IsRequired();
+            // });
+
             OnModelCreatingPartial(modelBuilder);
+            base.OnModelCreating(modelBuilder);
         }
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);

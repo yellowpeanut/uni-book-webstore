@@ -8,7 +8,7 @@ namespace BookWebApp.Data.Services.Interfaces
     {
         Task<IEnumerable<UserCart>> GetAllAsync();
         Task<UserCart> GetByIdAsync(int id);
-        Task<UserCart> GetByUserIdAsync(int id);
+        Task<UserCart> GetByUserIdAsync(string id);
         Task AddAsync(UserCart userCart);
         Task<UserCart> UpdateAsync(int id, UserCart newUserCart);
         Task DeleteAsync(int id);
