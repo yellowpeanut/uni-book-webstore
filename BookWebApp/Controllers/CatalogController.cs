@@ -17,7 +17,6 @@ namespace BookWebApp.Controllers
         public async Task<IActionResult> Index()
         {
             var data = await _service.GetAllAsync();
-            Debug.WriteLine(data);
             return View(data);
         }
     }

@@ -7,19 +7,35 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using BookWebApp.ViewModels;
+using Microsoft.AspNetCore.Authorization;
+using System.Linq;
 
 namespace BookWebApp.Controllers
 {
     public class UserController : Controller
     {
-        public readonly IUserService _service;
+        public readonly IUserService _userService;
         public readonly SignInManager<User> _signInManager;
         public readonly UserManager<User> _userManager;
-        public UserController(IUserService service, SignInManager<User> signInManager, UserManager<User> userManager)
+        public readonly IUserInventoryService _userInventoryService;
+        public readonly IInventoryItemService _inventoryItemService;
+        public readonly IUserCartService _userCartService;
+        public readonly ICartItemService _cartItemService;
+
+        public UserController(IUserService service, 
+        IUserInventoryService userInventoryService, 
+        IInventoryItemService inventoryItemService, 
+        IUserCartService userCartService, 
+        ICartItemService cartItemService,
+        SignInManager<User> signInManager, UserManager<User> userManager)
         {
-            _service = service;
+            _userService = service;
             _signInManager = signInManager;
             _userManager = userManager;
+            _userInventoryService = userInventoryService;
+            _inventoryItemService = inventoryItemService;
+            _userCartService = userCartService;
+            _cartItemService = cartItemService;
         }
 
         public IActionResult LoginPartial()
@@ -49,7 +65,7 @@ namespace BookWebApp.Controllers
                 if (await _userManager.FindByEmailAsync(user.Email) == null)
                 {
                     user.Balance = 0;
-                    var result = await _service.AddAsync(user, Role.User, _userManager);
+                    var result = await _userService.AddAsync(user, Role.User, _userManager);
                     if(result)
                     {
                         await _userManager.AddToRoleAsync(user, Role.User);
@@ -77,9 +93,8 @@ namespace BookWebApp.Controllers
 
         public IActionResult Login()
         {
-            /*_signInManager.IsSignedIn(ClaimsPrincipal.Current)*/
-            if(true)
-                return View();
+            if(_signInManager.IsSignedIn(User))
+                return View("Home", "Index");
             else
                 return View();
         }
@@ -113,34 +128,35 @@ namespace BookWebApp.Controllers
             return View();
         }
 
+        [Authorize]
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
         }
 
+        [Authorize]
         public IActionResult Profile()
         {
-            if(HttpContext.Session.GetString("User") != null)
-                return View(Models.User.Deserialize(HttpContext.Session.GetString("User")));
-            else
-                return View("Login");
+            return View();
         }
 
-        public IActionResult Inventory()
+        [Authorize]
+        public async Task<IActionResult> InventoryAsync()
         {
-            if(HttpContext.Session.GetString("User") != null)
-                return View(Models.User.Deserialize(HttpContext.Session.GetString("User")));
-            else
-                return View("Login");
+            Models.User user = await _userManager.GetUserAsync(User);
+            Models.UserInventory inventory = await _userInventoryService.GetByUserIdAsync(user.Id);
+            var inventoryItems = (await _inventoryItemService.GetByInventoryIdAsync(inventory.Id)).ToList();
+            return View(inventoryItems);
         }
 
-        public IActionResult Cart()
+        [Authorize]
+        public async Task<IActionResult> CartAsync()
         {
-            if(HttpContext.Session.GetString("User") != null)
-                return View(Models.User.Deserialize(HttpContext.Session.GetString("User")));
-            else
-                return View("Login");
+            Models.User user = await _userManager.GetUserAsync(User);
+            Models.UserCart cart = await _userCartService.GetByUserIdAsync(user.Id);
+            var cartItems = (await _cartItemService.GetByCartIdAsync(cart.Id)).ToList();
+            return View(cartItems);
         }
 
 
