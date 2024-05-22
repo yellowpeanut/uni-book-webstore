@@ -1,0 +1,32 @@
+@model Application.ViewModels.ProfileViewModel
+
+@using Microsoft.AspNetCore.Identity;
+@using Application.Models;
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+
+@{
+    var user = await UserManager.GetUserAsync(User);
+}
+
+@if (SignInManager.IsSignedIn(User))
+{
+    <form class="" method="post" asp-controller="User" asp-action="Update">
+        <fieldset class="">
+            <legend class="text-black">Профиль</legend>
+            <div class="">
+                <label for="" class="form-label mt-4">Имя пользователя</label>
+                <input type="text" class="form-control w-50" value="@user.UserName" asp-for="UserName">
+            </div>
+            <div class="">
+                <label for="" class="form-label mt-4">Пароль</label>
+                <input type="password" class="form-control w-50" value="@user.Password" asp-for="Password">
+            </div>
+            <div class="">
+                <label for="" class="form-label mt-4">Адрес электронной почты</label>
+                <input type="text" class="form-control w-50" value="@user.Email" asp-for="Email">
+            </div>
+            <button type="submit" class="btn btn-primary mt-4">Сохранить</button>
+        </fieldset>
+    </form>
+}

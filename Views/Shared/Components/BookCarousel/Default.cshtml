@@ -1,0 +1,45 @@
+﻿@model IEnumerable<Application.Models.BookData>
+
+@{
+    Layout = null;
+    int cardsPerSlide = 3;
+
+    var cardSlides = Model.Chunk(cardsPerSlide);
+}
+
+@if (Model != null)
+{
+    <div id="@ViewBag.Id" class="carousel slide" data-ride="carousel">
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                @foreach (var card in cardSlides.First())
+                {
+                    @await Component.InvokeAsync("BookCard", new {
+                        bookData = card,
+                        mode = Application.Data.Enums.BookCardModes.Add
+                        })
+                }
+            </div>
+            @foreach (var slide in cardSlides.Skip(1))
+            {
+                <div class="carousel-item">
+                    @foreach (var card in slide)
+                    {
+                        @await Component.InvokeAsync("BookCard", new {
+                        bookData = card,
+                        mode = Application.Data.Enums.BookCardModes.Add
+                        })
+                    }
+                </div>
+            }
+        </div>
+        <a class="carousel-control-prev" href="#@ViewBag.Id" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only"></span>
+        </a>
+        <a class="carousel-control-next" href="#@ViewBag.Id" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only"></span>
+        </a>
+    </div>
+}

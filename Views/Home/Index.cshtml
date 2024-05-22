@@ -1,0 +1,66 @@
+﻿@*
+    model description:
+    Model[0] = specific user recommendations
+    Model[1] = popular items
+*@
+
+@model IEnumerable<IEnumerable<Application.Models.BookData>>
+
+@using Microsoft.AspNetCore.Identity;
+@using Application.Models;
+
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+@* <section id="hero" class="d-flex flex-column justify-content-center align-items-center">
+    <div class="container text-center text-md-left h-75" data-aos="fade-up">
+        <p>Добро пожаловать!</p>
+        <p>Мы рады видеть вас в нашем онлайн магазине!</p>
+        <button href="#about" class="btn btn-primary">В каталог</button>
+    </div>
+</section> *@
+@*
+<main>
+<div class="container-lg">
+    <p class="fs-3">Добро пожаловать!</p>
+    <p>Мы рады видеть вас в нашем онлайн магазине!</p>
+    <button href="#about" class="btn btn-primary">В каталог</button>
+</div>
+</main>
+*@
+
+@* HERO *@
+  <div class="container col-xxl-8 px-4 py-5">
+    <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
+      <div class="col-10 col-sm-8 col-lg-6">
+        <img src="~/img/book.png" class="d-block mx-lg-auto img-fluid" alt="Library Image" width="800" height="600" loading="lazy">
+      </div>
+      <div class="col-lg-6">
+            <h1 class="display-5 fw-bold text-body-emphasis lh-1 mb-3">Добро пожаловать!</h1>
+            <p class="lead">Мы рады видеть вас в нашем онлайн магазине!</p>
+        <div>
+            <button type="button" class="btn btn-primary">В каталог</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+ @* RECOMMENDATION CAROUSEL *@
+<h2>Для вас</h2>
+@await Component.InvokeAsync("BookCarousel", new {
+     books = Model.First(),
+     carouselId = ViewData["IdRecommended"]
+    })
+  
+ @* POPULAR CARUOSEL *@
+<h2>Популярное</h2>
+ @await Component.InvokeAsync("BookCarousel", new {
+     books = Model.Last(), 
+     carouselId = ViewData["IdPopular"]
+    })
+
+<script src="~/js/carousel.js" asp-append-version="true"></script>

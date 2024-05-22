@@ -1,0 +1,18 @@
+﻿@model IEnumerable<Application.Models.BookData>
+
+@{
+    Layout = null;
+}
+
+@if(Model != null)
+{
+    <div class="mt-5">
+        @foreach (var book in Model)
+        {
+            @await Component.InvokeAsync("BookCard", new {
+                bookData = book,
+                mode = ViewBag.Mode
+            })
+        }
+    </div>
+}

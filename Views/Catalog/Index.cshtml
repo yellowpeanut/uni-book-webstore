@@ -1,0 +1,29 @@
+﻿@*
+    List decsription:
+    model[0] = all books
+    model[1] = recommended books
+*@
+@model IEnumerable<IEnumerable<Application.Models.BookData>>
+
+@{
+    <div class="container mt-5">
+        <form class="form-inline d-inline-flex w-100" method="post" asp-controller="Catalog" asp-action="Search">
+            <input class="form-control" type="search" placeholder="Найдите то, что вам нужно" aria-label="Search" name="query" text="@ViewBag.Query">
+            <button class="btn btn-info" type="submit">Поиск</button>
+        </form>
+    </div>
+
+    @if (Model.First().Count() != 0)
+    {
+        @await Component.InvokeAsync("BookList", new {
+        bookList = Model.First(),
+        mode = Application.Data.Enums.BookCardModes.Add
+    })
+    }
+    else
+    {
+        <div class="mt-5">
+            <h3 class="ml-3">По вашему запросу ничего не найдено!</h3>
+        </div>
+    }
+}

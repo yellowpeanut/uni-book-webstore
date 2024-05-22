@@ -1,0 +1,19 @@
+@model IEnumerable<Application.Models.BookData>
+
+@using Microsoft.AspNetCore.Identity;
+@using Application.Models;
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+
+@{
+    var user = await UserManager.GetUserAsync(User);
+}
+
+@if (SignInManager.IsSignedIn(User))
+{
+    <h2 class="mb-5">Купленные книги</h2>
+    @await Component.InvokeAsync("BookList", new{
+        bookList = Model,
+        mode = Application.Data.Enums.BookCardModes.Rate
+    })
+}
