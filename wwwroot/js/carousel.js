@@ -1,3 +1,5 @@
+/*import * as bootstrap from "../lib/bootstrap/dist/js/bootstrap"
+*/
 var multipleCardCarousel = document.querySelector(
     "#carouselExampleControls"
 );

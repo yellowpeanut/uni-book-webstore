@@ -15,4 +15,15 @@
             })
         }
     </div>
+    @if (ViewBag.Mode == Application.Data.Enums.BookCardModes.Remove)
+    {
+        @if (Model.Any())
+        {
+            <div>
+                <p class="text-primary">
+                    Полная стоимость товаров: @Model.Sum(e => e.Book.Price) рублей
+                </p>
+            </div>
+        }
+    }
 }

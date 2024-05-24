@@ -17,12 +17,14 @@ namespace uni_book_webstore.Controllers
         public readonly InventoryItemService _inventoryItemService;
         public readonly UserCartService _userCartService;
         public readonly CartItemService _cartItemService;
+        public readonly BookDataService _bookDataService;
 
         public UserController(UserService service,
         UserInventoryService userInventoryService,
         InventoryItemService inventoryItemService,
         UserCartService userCartService,
         CartItemService cartItemService,
+        BookDataService bookDataService,
         SignInManager<User> signInManager, UserManager<User> userManager)
         {
             _userService = service;
@@ -32,6 +34,7 @@ namespace uni_book_webstore.Controllers
             _inventoryItemService = inventoryItemService;
             _userCartService = userCartService;
             _cartItemService = cartItemService;
+            _bookDataService = bookDataService;
         }
 
         [HttpGet]
@@ -68,7 +71,8 @@ namespace uni_book_webstore.Controllers
                     if (result)
                     {
                         await _userManager.AddToRoleAsync(user, Roles.User);
-                        return await Login(new LoginViewModel() { Email = user.Email, Password = user.Password });
+                        return await Login(new LoginViewModel() 
+                        { Email = user.Email, Password = user.Password });
                     }
                     else
                     {
@@ -147,8 +151,10 @@ namespace uni_book_webstore.Controllers
         {
             User user = await _userManager.GetUserAsync(User);
             UserInventory inventory = await _userInventoryService.GetByUserIdAsync(user.Id);
-            var inventoryItems = (await _inventoryItemService.GetByInventoryIdAsync(inventory.Id)).ToList();
-            return View(inventoryItems);
+            var bookIds = (await _inventoryItemService.GetByInventoryIdAsync(inventory.Id))
+                .Select(e => e.BookId).ToList();
+            var bookData = await _bookDataService.GetByIdsAsync(bookIds);
+            return View(bookData);
         }
 
         [Authorize]
@@ -156,8 +162,10 @@ namespace uni_book_webstore.Controllers
         {
             User user = await _userManager.GetUserAsync(User);
             UserCart cart = await _userCartService.GetByUserIdAsync(user.Id);
-            var cartItems = (await _cartItemService.GetByCartIdAsync(cart.Id)).ToList();
-            return View(cartItems);
+            var bookIds = (await _cartItemService.GetByCartIdAsync(cart.Id))
+                .Select(e => e.BookId).ToList();
+            var bookData = await _bookDataService.GetByIdsAsync(bookIds);
+            return View(bookData);
         }
 
 

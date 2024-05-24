@@ -1,0 +1,82 @@
+﻿@using Application.Data.Enums
+
+@model Application.Models.BookData
+@{
+    Layout = null;
+    int categoriesShown = 3;
+}
+
+@if (Model != null)
+{
+    @*<link rel="stylesheet" href="css/owl.carousel.min.css">
+    <link rel="stylesheet" href="css/owl.theme.default.min.css">*@
+
+    <div class="item">
+        <div class="blog-entry">
+            <a href="#" class="block-20 d-flex align-items-start" 
+            style="background-image: url(@Model.Book.ImageURL);">
+            </a>
+            <div class="text border border-top-0 p-4">
+                <h3 class="heading"><a href="#">@Model.Book.Title</a></h3>
+                <p>@Model.Book.Author</p>
+                @if (Model.Book.Rating != null)
+                {
+                    <p class="text-primary">★★★★★ @Model.Book.Rating / 10</p>
+                }
+                @for (int i=0; i<categoriesShown; i++)
+                {
+                    <div class="m-1 ml-0">
+                        <button class="btn btn-secondary btn-sm" style="background: #ddd">
+                        @Model.CategoryValues.ElementAt(i)
+                        </button>
+                    </div>
+                }
+                <p>@Model.Book.Price руб</p>
+                <div class="d-flex align-items-center mt-4">
+                    <button class="btn btn-success small" asp-action="AddToCart">
+                        В корзину
+                    </button>
+                    <p class="ml-auto meta2 mb-0">
+                        <a href="#" class="mr-2">@ViewBag.PostAuthor</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+@*    <div class="d-inline-flex w-100 border-bottom border-1 mb-4">
+        <div class="">
+            <img src="@Model.Book.ImageURL" width="160" height="240" alt="">
+        </div>
+        <div class="p-5 d-flex flex-column pt-0">
+            <div>
+                <h3>
+                    @Model.Book.Title
+                </h3>
+            </div>
+            <div>
+                <p>@Model.Book.Author</p>
+            </div>
+            @if (Model.Book.Rating != null)
+            {
+                <div>
+                    <p class="text-primary">★★★★★ @Model.Book.Rating / 10</p>
+                </div>
+            }
+            <div class="d-flex flex-row">
+                @foreach (var c in Model.CategoryValues)
+                {
+                    <div class="m-1 ml-0"><button class="btn btn-secondary btn-sm" style="background: #ddd">@c</button></div>
+                }
+            </div>
+            <div class="mt-3">
+                <div class="d-inline">@Model.Book.Price руб</div>
+            </div>
+            <div class="mt-3">
+                <button class="btn btn-success small" asp-action="AddToCart">
+                    В корзину
+                </button>
+            </div>
+        </div>
+    </div>*@
+}

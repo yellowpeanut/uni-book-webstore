@@ -82,6 +82,16 @@ namespace Application.Data.Services
             return bookData;
         }
 
+        public async Task<IEnumerable<BookData>> GetByIdsAsync(IEnumerable<ulong> ids)
+        {
+            var books = await _bookService.GetByIdsAsync(ids);
+            List<Category> allCategories = await _context.Category.ToListAsync();
+            List<BookCategory> bookCategories = await _context.BookCategory.ToListAsync();
+            var entities = MergeBooksAndCategories(books, allCategories, bookCategories);
+
+            return entities;
+        }
+
         public async Task<IEnumerable<BookData>> GetByNameAndCategories(string name, IEnumerable<Category>? categories = null)
         {
             List<BookData> entities = new List<BookData>() { };
@@ -159,7 +169,7 @@ namespace Application.Data.Services
             return entities;
         }
 
-        public async Task<BookData> UpdateAsync(uint id, BookData newBookData)
+        public async Task<BookData> UpdateAsync(ulong id, BookData newBookData)
         {
             await _bookService.UpdateAsync(id, newBookData.Book);
             var categories = await _bookService.GetCategoriesAsync(id);

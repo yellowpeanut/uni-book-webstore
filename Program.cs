@@ -20,6 +20,7 @@ builder.Services.AddScoped<InventoryItemService>();
 builder.Services.AddScoped<CartItemService>();
 builder.Services.AddScoped<UserInventoryService>();
 builder.Services.AddScoped<UserCartService>();
+builder.Services.AddScoped<PostService>();
 
 builder.Services.AddDefaultIdentity<User>(options =>
 { 

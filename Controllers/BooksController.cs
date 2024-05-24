@@ -8,36 +8,41 @@ using Microsoft.EntityFrameworkCore;
 using Application.Data;
 using Application.Models;
 using System.Diagnostics;
+using Application.Data.Services;
+using Microsoft.AspNetCore.Authorization;
+using Application.Data.Enums;
+using NuGet.Versioning;
+using Microsoft.AspNetCore.Identity;
 
 namespace uni_book_webstore.Controllers
 {
     public class BooksController : Controller
     {
-        private readonly ApplicationContext _context;
+        private readonly BookService _bookService;
 
-        public BooksController(ApplicationContext context)
+        public BooksController(BookService bookService)
         {
-            _context = context;
+            _bookService = bookService;
         }
 
         // GET: Books
+        [HttpGet]
+        [Authorize(Roles = Roles.Admin + "," + Roles.Manager)]
         public async Task<IActionResult> Index()
         {
-            return _context.Book != null ?
-                        View(await _context.Book.ToListAsync()) :
-                        Problem("Entity set 'ApplicationContext.Book'  is null.");
+            var data = await _bookService.GetAllAsync();
+            return View(data);
         }
 
         // GET: Books/Details/5
+        [HttpGet]
         public async Task<IActionResult> Details(ulong? id)
         {
-            if (id == null || _context.Book == null)
+            if (id == null)
             {
                 return NotFound();
             }
-
-            var book = await _context.Book
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var book = await _bookService.GetByIdAsync((ulong)id);
             if (book == null)
             {
                 return NotFound();
@@ -47,36 +52,37 @@ namespace uni_book_webstore.Controllers
         }
 
         // GET: Books/Create
+        [HttpGet]
+        [Authorize(Roles = Roles.Admin + "," + Roles.Manager)]
         public IActionResult Create()
         {
             return View();
         }
 
         // POST: Books/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Author,Title,ReleaseYear,ImageURL,Price,SoldQuantity,Rating")] Book book)
+        public async Task<IActionResult> Create(Book book)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(book);
-                await _context.SaveChangesAsync();
+                await _bookService.AddAsync(book);
                 return RedirectToAction(nameof(Index));
             }
             return View(book);
         }
 
         // GET: Books/Edit/5
+        [HttpGet]
+        [Authorize(Roles = Roles.Admin + "," + Roles.Manager)]
         public async Task<IActionResult> Edit(ulong? id)
         {
-            if (id == null || _context.Book == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var book = await _context.Book.FindAsync(id);
+            var book = await _bookService.GetByIdAsync((ulong)id);
             if (book == null)
             {
                 return NotFound();
@@ -85,12 +91,12 @@ namespace uni_book_webstore.Controllers
         }
 
         // POST: Books/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(ulong id, [Bind("Id,Author,Title,ReleaseYear,ImageURL,Price,SoldQuantity,Rating")] Book book)
+        public async Task<IActionResult> Edit(ulong id, Book book)
         {
+            
             if (id != book.Id)
             {
                 return NotFound();
@@ -100,19 +106,11 @@ namespace uni_book_webstore.Controllers
             {
                 try
                 {
-                    _context.Update(book);
-                    await _context.SaveChangesAsync();
+                    await _bookService.UpdateAsync(id, book);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!BookExists(book.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+
                 }
                 return RedirectToAction(nameof(Index));
             }
@@ -120,15 +118,16 @@ namespace uni_book_webstore.Controllers
         }
 
         // GET: Books/Delete/5
+        [HttpGet]
+        [Authorize(Roles = Roles.Admin + "," + Roles.Manager)]
         public async Task<IActionResult> Delete(ulong? id)
         {
-            if (id == null || _context.Book == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var book = await _context.Book
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var book = await _bookService.GetByIdAsync((ulong)id);
             if (book == null)
             {
                 return NotFound();
@@ -142,23 +141,13 @@ namespace uni_book_webstore.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(ulong id)
         {
-            if (_context.Book == null)
-            {
-                return Problem("Entity set 'ApplicationContext.Book'  is null.");
-            }
-            var book = await _context.Book.FindAsync(id);
-            if (book != null)
-            {
-                _context.Book.Remove(book);
-            }
-
-            await _context.SaveChangesAsync();
+            await _bookService.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }
 
-        private bool BookExists(ulong id)
+        /*private bool BookExists(ulong id)
         {
             return (_context.Book?.Any(e => e.Id == id)).GetValueOrDefault();
-        }
+        }*/
     }
 }

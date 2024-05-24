@@ -14,10 +14,17 @@
             <div class="carousel-item active">
                 @foreach (var card in cardSlides.First())
                 {
-                    @await Component.InvokeAsync("BookCard", new {
+                    @*@await Component.InvokeAsync("BookCarouselCard", card)
+                    @*new
+                    {
                         bookData = card,
                         mode = Application.Data.Enums.BookCardModes.Add
-                        })
+                    }*@
+                    @await Component.InvokeAsync("BookCard", new
+                    {
+                    bookData = card,
+                    mode = Application.Data.Enums.BookCardModes.Add
+                    })
                 }
             </div>
             @foreach (var slide in cardSlides.Skip(1))
@@ -25,7 +32,9 @@
                 <div class="carousel-item">
                     @foreach (var card in slide)
                     {
-                        @await Component.InvokeAsync("BookCard", new {
+                        @*@await Component.InvokeAsync("BookCarouselCard", card)*@
+                        @await Component.InvokeAsync("BookCard", new
+                        {
                         bookData = card,
                         mode = Application.Data.Enums.BookCardModes.Add
                         })
@@ -42,4 +51,5 @@
             <span class="sr-only"></span>
         </a>
     </div>
+    <script type="module" src="~/js/carousel.js" asp-append-version="true"></script>
 }

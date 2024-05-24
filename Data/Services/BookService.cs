@@ -94,6 +94,12 @@ namespace Application.Data.Services
             return entity;
         }
 
+        public async Task<IEnumerable<Book>> GetByIdsAsync(IEnumerable<ulong> ids)
+        {
+            var entities = await _context.Book.Where(e => ids.Contains(e.Id)).ToListAsync();
+            return entities;
+        }
+
         public async Task<IEnumerable<Category>> GetCategoriesAsync(ulong id)
         {
             var bookCategoryList = await _bookCategoryService.GetByBookIdAsync(id);
