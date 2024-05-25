@@ -1,4 +1,5 @@
-﻿using Application.Data.Services;
+﻿using Application.Data;
+using Application.Data.Services;
 using Application.Models;
 using Application.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -13,18 +14,47 @@ namespace uni_book_webstore.Controllers
         private readonly BookDataService _bookDataService;
         private readonly UserService _userService;
         private readonly UserManager<User> _userManager;
+        private readonly ApplicationContext _context;
         public PostsController(PostService postService, BookDataService bookDataService,
-            UserService userService, UserManager<User> userManager)
+            UserService userService, UserManager<User> userManager,
+            ApplicationContext context)
         {
             _postService = postService;
             _bookDataService = bookDataService;
             _userService = userService;
             _userManager = userManager;
+            _context = context;
         }
+
         [HttpGet]
-        public async Task<IActionResult> Index(ulong id)
+        public async Task<IActionResult> Index()
         {
-            var post = await _postService.GetByIdAsync(id);
+            // var posts = await _postService.GetAllAsync();
+            var bookData = await _bookDataService.GetAllAsync();
+            // var users = await _userService.GetAllAsync();
+            var entities = Application.Data.Utils.PostHelper.StickBookDataToPostVM(_context, bookData);
+
+/*            foreach (var post in posts)
+            {
+                entities.Add(new PostViewModel() 
+                { 
+                    BookData = bookData.Where(b => b.Book.Id == post.BookId).First(),
+                    User = users.Where(u => u.Id == post.UserId).First()
+                });
+            }*/
+
+            return View(entities);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Details(ulong? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var post = await _postService.GetByIdAsync((ulong)id);
             if (post == null)
             {
                 return NotFound();

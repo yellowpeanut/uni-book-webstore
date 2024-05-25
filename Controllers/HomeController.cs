@@ -1,5 +1,7 @@
-﻿using Application.Data.Services;
+﻿using Application.Data;
+using Application.Data.Services;
 using Application.Models;
+using Application.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -8,15 +10,15 @@ namespace uni_book_webstore.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly ApplicationContext _context;
         private readonly BookDataService _bookDataService;
         public readonly SignInManager<User> _signInManager;
         public readonly UserManager<User> _userManager;
 
-        public HomeController(ILogger<HomeController> logger, BookDataService bookDataService,
+        public HomeController(ApplicationContext context, BookDataService bookDataService,
             SignInManager<User> signInManager, UserManager<User> userManager)
         {
-            _logger = logger;
+            _context = context;
             _bookDataService = bookDataService;
             _signInManager = signInManager;
             _userManager = userManager;
@@ -38,7 +40,11 @@ namespace uni_book_webstore.Controllers
             }
             ViewData["IdRecommended"] = "recommendedCarousel";
             ViewData["IdPopular"] = "popularCarousel";
-            var data = new List<IEnumerable<BookData>> { userRecommendationData, popularRecommendationData };
+            var data = new List<IEnumerable<PostViewModel>> {
+                Application.Data.Utils.PostHelper.StickBookDataToPostVM
+                (_context, userRecommendationData),
+                Application.Data.Utils.PostHelper.StickBookDataToPostVM
+                (_context, popularRecommendationData)};
             return View(data);
         }
     }

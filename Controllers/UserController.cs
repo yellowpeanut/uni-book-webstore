@@ -147,6 +147,7 @@ namespace uni_book_webstore.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> InventoryAsync()
         {
             User user = await _userManager.GetUserAsync(User);
@@ -158,6 +159,7 @@ namespace uni_book_webstore.Controllers
         }
 
         [Authorize]
+        [HttpGet]
         public async Task<IActionResult> CartAsync()
         {
             User user = await _userManager.GetUserAsync(User);

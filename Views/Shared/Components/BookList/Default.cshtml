@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Application.Models.BookData>
+﻿@model IEnumerable<Application.ViewModels.PostViewModel>
 
 @{
     Layout = null;
@@ -10,7 +10,7 @@
         @foreach (var book in Model)
         {
             @await Component.InvokeAsync("BookCard", new {
-                bookData = book,
+                model = book,
                 mode = ViewBag.Mode
             })
         }
@@ -21,7 +21,7 @@
         {
             <div>
                 <p class="text-primary">
-                    Полная стоимость товаров: @Model.Sum(e => e.Book.Price) рублей
+                    Полная стоимость товаров: @Model.Sum(e => e.BookData.Book.Price) рублей
                 </p>
             </div>
         }

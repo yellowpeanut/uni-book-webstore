@@ -43,6 +43,12 @@ namespace Application.Data.Services
             return entity;
         }
 
+        public async Task<Post> GetByUserIdAndBookIdAsync(string userId, ulong bookId)
+        {
+            var entity = await _context.Post.FirstOrDefaultAsync(e => e.UserId == userId && e.BookId == bookId);
+            return entity;
+        }
+
         public async Task<Post> UpdateAsync(ulong id, Post newPost)
         {
             _context.Post.Update(newPost);

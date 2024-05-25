@@ -1,42 +1,29 @@
-﻿@using Application.ViewModels;
-
-@*
-    model description:
-    first item = item of the post
-    second item = recommended items
+﻿@*
+    List decsription:
+    model[0] = all books
+    model[1] = recommended books
 *@
-
-@model PostViewModel
-@{
-    BookData bookData = Model.BookData;
-}
+@model IEnumerable<Application.ViewModels.PostViewModel>
 
 @{
-    <section class="py-5">
-        <div class="container px-4 px-lg-5 my-5">
-            <div class="row gx-4 gx-lg-5 align-items-center">
-                <div class="col-md-6"><img class="card-img-top mb-5 mb-md-0" src="@bookData.Book.ImageURL" alt="..." /></div>
-                <div class="col-md-6">
-                    @*<div class="small mb-1">SKU: BST-498</div>*@
-                    <h1 class="display-5 fw-bolder">@bookData.Book.Title</h1>
-                    <h3 class="display-5 fw-bolder">@bookData.Book.Author</h3>
-                    <div class="fs-5 mb-5">
-                        <span>@bookData.Book.Price рублей</span>
-                    </div>
-                    @if (bookData.Book.Rating != null)
-                    {
-                        <p class="text-primary">★★★★★ @bookData.Book.Rating / 10</p>
-                    }
-                    <button class="btn btn-success" asp-action="AddToCart">
-                        В корзину
-                    </button>
-                </div>
-            </div>
-        </div>
-    </section>
+    <div class="container mt-5">
+        <form class="form-inline d-inline-flex w-100" method="post" asp-controller="Catalog" asp-action="Search">
+            <input class="form-control" type="search" placeholder="Найдите то, что вам нужно" aria-label="Search" name="query" text="@ViewBag.Query">
+            <button class="btn btn-info" type="submit">Поиск</button>
+        </form>
+    </div>
 
-    @await Component.InvokeAsync("BookCarousel", new {
-        books = Model.RecommendedItems,
-        carouselId = Model.User.Id
+    @if (Model.Count() != 0)
+    {
+        @await Component.InvokeAsync("BookList", new {
+        model = @Model,
+        mode = Application.Data.Enums.BookCardModes.Add
     })
+    }
+    else
+    {
+        <div class="mt-5">
+            <h3 class="ml-3">По вашему запросу ничего не найдено!</h3>
+        </div>
+    }
 }

@@ -4,16 +4,15 @@ namespace Application.ViewComponents
 {
     public class BookCarouselCardViewComponent : ViewComponent
     {
-        public IViewComponentResult Invoke(Models.BookData bookData, string postAuthor)
+        public IViewComponentResult Invoke(ViewModels.PostViewModel model)
         {
-            ViewBag.PostAuthor = postAuthor;
-            return View(bookData);
+            return View(model);
         }
 
         [HttpPost]
-        public IViewComponentResult AddToCart(Models.BookData bookData)
+        public IViewComponentResult AddToCart(ViewModels.PostViewModel model)
         {
-            return View(bookData);
+            return View(model);
         }
     }
 }

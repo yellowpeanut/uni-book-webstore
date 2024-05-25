@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Application.Models.BookData>
+﻿@model IEnumerable<Application.ViewModels.PostViewModel>
 
 @{
     Layout = null;
@@ -22,7 +22,7 @@
                     }*@
                     @await Component.InvokeAsync("BookCard", new
                     {
-                    bookData = card,
+                    model = card,
                     mode = Application.Data.Enums.BookCardModes.Add
                     })
                 }
@@ -35,7 +35,7 @@
                         @*@await Component.InvokeAsync("BookCarouselCard", card)*@
                         @await Component.InvokeAsync("BookCard", new
                         {
-                        bookData = card,
+                        model = card,
                         mode = Application.Data.Enums.BookCardModes.Add
                         })
                     }

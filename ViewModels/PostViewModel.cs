@@ -9,7 +9,6 @@ namespace Application.ViewModels
         public BookData BookData { get; set; }
         [Required]
         public User User { get; set; }
-        [Required]
         public IEnumerable<BookData> RecommendedItems { get; set; }
     }
 }

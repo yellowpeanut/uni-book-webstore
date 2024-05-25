@@ -5,7 +5,7 @@ namespace Application.ViewComponents
 {
     public class BookCarouselViewComponent:ViewComponent
     {
-        public IViewComponentResult Invoke(IEnumerable<Models.BookData> books, string carouselId)
+        public IViewComponentResult Invoke(IEnumerable<ViewModels.PostViewModel> books, string carouselId)
         {
             ViewBag.Id = carouselId;
             return View(books);

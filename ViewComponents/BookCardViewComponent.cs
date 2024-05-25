@@ -4,16 +4,16 @@ namespace Application.ViewComponents
 {
     public class BookCardViewComponent:ViewComponent
     {
-        public IViewComponentResult Invoke(Models.BookData bookData, string mode)
+        public IViewComponentResult Invoke(ViewModels.PostViewModel model, string mode)
         {
             ViewBag.Mode = mode;
-            return View(bookData);
+            return View(model);
         }
 
-        public IViewComponentResult AddToCart(Models.BookData bookData, string mode)
+        public IViewComponentResult AddToCart(ViewModels.PostViewModel model, string mode)
         {
             ViewBag.Mode = mode;
-            return View(bookData);
+            return View(model);
         }
     }
 }

@@ -22,6 +22,7 @@ namespace Application.Data
                 var context = serviceScope.ServiceProvider.GetService<ApplicationContext>();
                 context.Database.EnsureCreated();
 
+                // ROLES //
                 var roleManager = serviceScope.ServiceProvider.GetService<RoleManager<IdentityRole>>();
                 Roles roleStruct = new Roles();
                 var roles = roleStruct.GetType().GetFields();
@@ -32,6 +33,7 @@ namespace Application.Data
                         await roleManager.CreateAsync(new IdentityRole(role));
                 }
 
+                // BOOKS //
                 if (!context.Book.Any())
                 {
                     Random rnd = new Random();
@@ -91,6 +93,8 @@ namespace Application.Data
                         });
                     }
                 }*/
+
+                // ADMIN USER //
                 var userManager = serviceScope.ServiceProvider.GetService<UserManager<User>>();
                 if(await userManager.FindByEmailAsync("admin@admin.com") == null)
                 {
@@ -110,6 +114,28 @@ namespace Application.Data
                         System.Diagnostics.Debug.WriteLine("user service exists!!");
                 }
                 else { System.Diagnostics.Debug.WriteLine("admin exists!!"); }
+
+                // POSTS //
+                var postService = serviceScope.ServiceProvider.GetService<PostService>();
+                if ((await postService.GetAllAsync()).Count() < 1)
+                {
+                    var admin = await userManager.FindByEmailAsync("admin@admin.com");
+                    if (admin != null)
+                    {
+                        var bookService = serviceScope.ServiceProvider.GetService<BookService>();
+                        var bookList = await bookService.GetAllAsync();
+                        foreach (var book in bookList)
+                        {
+                            var post = new Post()
+                            {
+                                UserId = admin.Id,
+                                BookId = book.Id
+                            };
+                            await postService.AddAsync(post);
+                        }
+                    }
+                }
+
             }
         }
     }

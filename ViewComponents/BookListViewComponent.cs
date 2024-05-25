@@ -5,10 +5,10 @@ namespace Application.ViewComponents
 {
     public class BookListViewComponent:ViewComponent
     {
-        public IViewComponentResult Invoke(IEnumerable<Models.BookData> bookList, string mode)
+        public IViewComponentResult Invoke(IEnumerable<ViewModels.PostViewModel> model, string mode)
         {
             ViewBag.Mode = mode;
-            return View(bookList);
+            return View(model);
         }
     }
 }
