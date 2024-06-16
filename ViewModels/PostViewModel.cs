@@ -6,9 +6,7 @@ namespace Application.ViewModels
     public class PostViewModel
     {
         [Required]
-        public BookData BookData { get; set; }
-        [Required]
-        public User User { get; set; }
-        public IEnumerable<BookData> RecommendedItems { get; set; }
+        public BookCardViewModel BookCard { get; set; }
+        public IEnumerable<BookCardViewModel> RecommendedItems { get; set; }
     }
 }

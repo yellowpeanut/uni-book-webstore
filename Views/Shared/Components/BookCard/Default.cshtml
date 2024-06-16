@@ -1,6 +1,6 @@
 ﻿@using Application.Data.Enums
 
-@model Application.ViewModels.PostViewModel
+@model Application.ViewModels.BookCardViewModel
 
 @{
     Layout = null;
@@ -35,7 +35,7 @@
                 }
             </div>
             <div class="mt-3">
-                <div class="d-inline">@bookData.Book.Price руб</div>
+                <div class="d-inline">@Model.Price руб</div>
                 @if (ViewBag.Mode == BookCardModes.Remove)
                 {
                     <div class="d-inline" style="margin-left: 25px; margin-bottom: 0">Количество</div>
@@ -45,13 +45,13 @@
             <div class="mt-3">
                 @if(ViewBag.Mode == BookCardModes.Add)
                 {
-                    <button class="btn btn-success small" asp-action="AddToCart">
+                    <button class="btn btn-success small" asp-controller="Posts" asp-action="AddBookToCart">
                         В корзину
                     </button>
                 }
                 else if(ViewBag.Mode == BookCardModes.Remove)
                 {
-                    <button class="btn btn-danger small">
+                    <button class="btn btn-danger small" asp-controller="Posts" asp-action="RemoveBookFromCart">
                         Убрать
                     </button>
                 }
@@ -61,9 +61,9 @@
                 }
                 else if (ViewBag.Mode == BookCardModes.None){}
 
-                <span class="float-end mt-4">
+                <div class="mt-3">
                     Продавец: @postAuthor.UserName
-                </span>
+                </div>
             </div>
         </div>
     </div>

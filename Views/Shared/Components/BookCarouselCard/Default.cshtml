@@ -1,9 +1,10 @@
 ﻿@using Application.Data.Enums
 
-@model Application.Models.BookData
+@model Application.ViewModels.BookCardViewModel
 @{
     Layout = null;
     int categoriesShown = 3;
+    BookData bookData = Model.BookData;
 }
 
 @if (Model != null)
@@ -13,25 +14,25 @@
 
     <div class="item">
         <div class="blog-entry">
-            <a href="#" class="block-20 d-flex align-items-start" 
-            style="background-image: url(@Model.Book.ImageURL);">
+            <a href="#" class="block-20 d-flex align-items-start"
+               style="background-image: url(@bookData.Book.ImageURL);">
             </a>
             <div class="text border border-top-0 p-4">
-                <h3 class="heading"><a href="#">@Model.Book.Title</a></h3>
-                <p>@Model.Book.Author</p>
-                @if (Model.Book.Rating != null)
+                <h3 class="heading"><a href="#">@bookData.Book.Title</a></h3>
+                <p>@bookData.Book.Author</p>
+                @if (bookData.Book.Rating != null)
                 {
-                    <p class="text-primary">★★★★★ @Model.Book.Rating / 10</p>
+                    <p class="text-primary">★★★★★ @bookData.Book.Rating / 10</p>
                 }
                 @for (int i=0; i<categoriesShown; i++)
                 {
                     <div class="m-1 ml-0">
                         <button class="btn btn-secondary btn-sm" style="background: #ddd">
-                        @Model.CategoryValues.ElementAt(i)
+                            @bookData.CategoryValues.ElementAt(i)
                         </button>
                     </div>
                 }
-                <p>@Model.Book.Price руб</p>
+                <p>@Model.Price руб</p>
                 <div class="d-flex align-items-center mt-4">
                     <button class="btn btn-success small" asp-action="AddToCart">
                         В корзину

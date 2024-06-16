@@ -40,10 +40,10 @@ namespace uni_book_webstore.Controllers
             }
             ViewData["IdRecommended"] = "recommendedCarousel";
             ViewData["IdPopular"] = "popularCarousel";
-            var data = new List<IEnumerable<PostViewModel>> {
-                Application.Data.Utils.PostHelper.StickBookDataToPostVM
+            var data = new List<IEnumerable<BookCardViewModel>> {
+                Application.Data.Utils.BookDataHelper.StickBookDataToBookCardVM
                 (_context, userRecommendationData),
-                Application.Data.Utils.PostHelper.StickBookDataToPostVM
+                Application.Data.Utils.BookDataHelper.StickBookDataToBookCardVM
                 (_context, popularRecommendationData)};
             return View(data);
         }

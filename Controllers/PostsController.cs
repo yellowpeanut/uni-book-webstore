@@ -32,7 +32,7 @@ namespace uni_book_webstore.Controllers
             // var posts = await _postService.GetAllAsync();
             var bookData = await _bookDataService.GetAllAsync();
             // var users = await _userService.GetAllAsync();
-            var entities = Application.Data.Utils.PostHelper.StickBookDataToPostVM(_context, bookData);
+            var entities = Application.Data.Utils.BookDataHelper.StickBookDataToBookCardVM(_context, bookData);
 
 /*            foreach (var post in posts)
             {
@@ -44,7 +44,7 @@ namespace uni_book_webstore.Controllers
             }*/
 
             return View(entities);
-        }
+        }    
 
         [HttpGet]
         public async Task<IActionResult> Details(ulong? id)
@@ -63,12 +63,17 @@ namespace uni_book_webstore.Controllers
             var bookData = await _bookDataService.GetByIdAsync(post.BookId);
             var user = await _userService.GetByIdAsync(post.UserId);
             var recommendedItems = await _bookDataService.GetRecommendedItems(post.UserId);
-
+            var recommendedBookCards = Application.Data.Utils.BookDataHelper
+                .StickBookDataToBookCardVM(_context, recommendedItems);
             PostViewModel postData = new PostViewModel()
             {
-                BookData = bookData,
-                User = user,
-                RecommendedItems = recommendedItems
+                BookCard = new BookCardViewModel(){
+                    BookData = bookData,
+                    User = user,
+                    Price = post.Price,
+                    ReleaseYear = post.ReleaseYear
+                },
+                RecommendedItems = recommendedBookCards
             };
 
             return View(postData);
@@ -77,6 +82,20 @@ namespace uni_book_webstore.Controllers
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> Create()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> AddBookToCart(ulong? bookId)
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> RemoveBookFromCart(ulong? bookId)
         {
             return View();
         }

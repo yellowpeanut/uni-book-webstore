@@ -18,6 +18,10 @@ namespace Application.Models
         public string UserId { get; set; }
         [Required]
         public ulong BookId { get; set; }
+        [Required]
+        public uint Price { get; set; }
+        [Required]
+        public ushort ReleaseYear { get; set; }
 
         [ForeignKey(nameof(UserId))]
         public virtual User User { get; set; }

@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Application.Models;
 using Microsoft.AspNetCore.Identity;
 using Application.Data.Enums;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Data
 {
@@ -19,6 +20,7 @@ namespace Application.Data
 
             using (var serviceScope = app.Services.CreateScope())
             {
+                Random rnd = new Random();
                 var context = serviceScope.ServiceProvider.GetService<ApplicationContext>();
                 context.Database.EnsureCreated();
 
@@ -36,7 +38,6 @@ namespace Application.Data
                 // BOOKS //
                 if (!context.Book.Any())
                 {
-                    Random rnd = new Random();
                     var bookService = serviceScope.ServiceProvider.GetService<BookService>();
 
                     /*                    var jsonString = File.ReadAllText("Data\\bookdata.json");
@@ -67,9 +68,7 @@ namespace Application.Data
                     var bdList = DbSeedingData.GetList();
                     foreach (var bd in bdList)
                     {
-                        bd.Book.Price = (uint) rnd.Next(250, 1000);
                         bd.Book.Rating = null;
-                        bd.Book.ReleaseYear = (ushort) rnd.Next(1995, 2015);
                         bd.Book.SoldQuantity = 0;
 
                         await bookService.AddWithCategoriesAsync(bd.Book, bd.CategoryValues);
@@ -77,24 +76,25 @@ namespace Application.Data
                     await context.SaveChangesAsync();
                 }
                 // var ctest = context.BookCategory.ToList();
-/*                if (!context.BookCategory.Any())
-                {
-                    var bServ = new BookService(context);
-                    var bcServ = new BookCategoryService(context);
-                    var bdList = DbSeedingData.GetList();
-                    var bList = (await bServ.GetAllAsync()).ToList();
-                    for (int i = 0; i < bList.Count()-1; i++)
-                    {
-                        await bcServ.AddAsync(new Models.BookCategory()
-                        {
-                            BookId = bList[i].Id,
-                            Book = bList[i],
-                            
-                        });
-                    }
-                }*/
+                /*                if (!context.BookCategory.Any())
+                                {
+                                    var bServ = new BookService(context);
+                                    var bcServ = new BookCategoryService(context);
+                                    var bdList = DbSeedingData.GetList();
+                                    var bList = (await bServ.GetAllAsync()).ToList();
+                                    for (int i = 0; i < bList.Count()-1; i++)
+                                    {
+                                        await bcServ.AddAsync(new Models.BookCategory()
+                                        {
+                                            BookId = bList[i].Id,
+                                            Book = bList[i],
+
+                                        });
+                                    }
+                                }*/
 
                 // ADMIN USER //
+                var userService = serviceScope.ServiceProvider.GetService<UserService>();
                 var userManager = serviceScope.ServiceProvider.GetService<UserManager<User>>();
                 if(await userManager.FindByEmailAsync("admin@admin.com") == null)
                 {
@@ -104,8 +104,6 @@ namespace Application.Data
                         Email = "admin@admin.com"
                     };
 
-
-                    var userService = serviceScope.ServiceProvider.GetService<UserService>();
                     await userService.AddAsync(user, Roles.Admin, userManager);
 
                     if (userService is null)
@@ -115,7 +113,40 @@ namespace Application.Data
                 }
                 else { System.Diagnostics.Debug.WriteLine("admin exists!!"); }
 
+                // OTHER USERS //
+
+                var userList = new List<User>() {
+                    new User()
+                    {
+                        UserName = "Владимир",
+                        Password = "vladimir12345",
+                        Email = "vladimir@mail.com"
+                    },
+                    new User()
+                    {
+                        UserName = "Петр",
+                        Password = "petr12345",
+                        Email = "petr@mail.com"
+                    },
+                    new User()
+                    {
+                        UserName = "Иван",
+                        Password = "ivan12345",
+                        Email = "ivan@mail.com"
+                    }
+                };
+
+                foreach (var u in userList)
+                {
+                    if (await userManager.FindByEmailAsync(u.Email) == null)
+                    {
+                        await userService.AddAsync(u, Roles.User, userManager);
+                    }
+                }
+
                 // POSTS //
+                /*context.Database.ExecuteSqlRaw("TRUNCATE TABLE [Post]");
+                context.SaveChanges();*/
                 var postService = serviceScope.ServiceProvider.GetService<PostService>();
                 if ((await postService.GetAllAsync()).Count() < 1)
                 {
@@ -129,11 +160,34 @@ namespace Application.Data
                             var post = new Post()
                             {
                                 UserId = admin.Id,
-                                BookId = book.Id
+                                BookId = book.Id,
+                                Price = (uint)rnd.Next(250, 1000),
+                                ReleaseYear = (ushort)rnd.Next(1995, 2015)
                             };
                             await postService.AddAsync(post);
                         }
+
+                        foreach (var u in userList)
+                        {
+                            var currentUser = await userManager.FindByEmailAsync(u.Email);
+                            if (currentUser != null)
+                            {
+                                var bookChunk = bookList.OrderBy(x => rnd.Next()).Take(rnd.Next(3, 15));
+                                foreach (var book in bookChunk)
+                                {
+                                    var post = new Post()
+                                    {
+                                        UserId = currentUser.Id,
+                                        BookId = book.Id,
+                                        Price = (uint)rnd.Next(250, 1000),
+                                        ReleaseYear = (ushort)rnd.Next(1995, 2015)
+                                    };
+                                    await postService.AddAsync(post);
+                                }
+                            }
+                        }
                     }
+
                 }
 
             }

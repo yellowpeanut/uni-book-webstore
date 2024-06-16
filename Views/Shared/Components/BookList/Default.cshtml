@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Application.ViewModels.PostViewModel>
+﻿@model IEnumerable<Application.ViewModels.BookCardViewModel>
 
 @{
     Layout = null;
@@ -21,7 +21,7 @@
         {
             <div>
                 <p class="text-primary">
-                    Полная стоимость товаров: @Model.Sum(e => e.BookData.Book.Price) рублей
+                    Полная стоимость товаров: @Model.Sum(e => e.Price) рублей
                 </p>
             </div>
         }

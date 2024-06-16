@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Application.ViewModels.PostViewModel>
+﻿@model IEnumerable<Application.ViewModels.BookCardViewModel>
 
 @{
     Layout = null;
@@ -9,7 +9,7 @@
 
 @if (Model != null)
 {
-    <div id="@ViewBag.Id" class="carousel slide" data-ride="carousel">
+    <div id="@ViewBag.Id" class="carousel slide" data-bs-ride="carousel">
         <div class="carousel-inner">
             <div class="carousel-item active">
                 @foreach (var card in cardSlides.First())

@@ -8,20 +8,21 @@
 
 @model PostViewModel
 @{
-    BookData bookData = Model.BookData;
+    BookData bookData = Model.BookCard.BookData;
 }
 
 @{
     <section class="py-5">
         <div class="container px-4 px-lg-5 my-5">
             <div class="row gx-4 gx-lg-5 align-items-center">
-                <div class="col-md-6"><img class="card-img-top mb-5 mb-md-0" src="@bookData.Book.ImageURL" alt="..." /></div>
+                <div class="col-md-6"><img class="card-img-top mb-5 mb-md-0" width="320" height="480" src="@bookData.Book.ImageURL" alt="..." /></div>
                 <div class="col-md-6">
                     @*<div class="small mb-1">SKU: BST-498</div>*@
                     <h1 class="display-5 fw-bolder">@bookData.Book.Title</h1>
                     <h3 class="display-5 fw-bolder">@bookData.Book.Author</h3>
+                    <h3 class="display-5 fw-bolder">@Model.BookCard.ReleaseYear</h3>
                     <div class="fs-5 mb-5">
-                        <span>@bookData.Book.Price рублей</span>
+                        <span>@Model.BookCard.Price рублей</span>
                     </div>
                     @if (bookData.Book.Rating != null)
                     {
@@ -37,6 +38,6 @@
 
     @await Component.InvokeAsync("BookCarousel", new {
         books = Model.RecommendedItems,
-        carouselId = Model.User.Id
+        carouselId = Model.BookCard.User.Id
     })
 }

@@ -24,10 +24,8 @@ namespace Application.Models
         [Required]
         [StringLength(255)]
         public string Title { get; set; }
-        public ushort ReleaseYear { get; set; }
         [StringLength(255)]
         public string? ImageURL { get; set; }
-        public uint Price { get; set; }
         public ulong? SoldQuantity { get; set; }
         public float? Rating { get; set; }
 

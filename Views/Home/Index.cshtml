@@ -4,7 +4,7 @@
     Model[1] = popular items
 *@
 
-@model IEnumerable<IEnumerable<Application.ViewModels.PostViewModel>>
+@model IEnumerable<IEnumerable<Application.ViewModels.BookCardViewModel>>
 
 @using Microsoft.AspNetCore.Identity;
 @using Application.Models;
@@ -43,7 +43,7 @@
             <h1 class="display-5 fw-bold text-body-emphasis lh-1 mb-3">Добро пожаловать!</h1>
             <p class="lead">Мы рады видеть вас в нашем онлайн магазине!</p>
         <div>
-            <button type="button" class="btn btn-primary">В каталог</button>
+            <button type="button" class="btn btn-primary" asp-controller="Posts" asp-action="Index">В каталог</button>
         </div>
       </div>
     </div>
