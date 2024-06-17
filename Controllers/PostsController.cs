@@ -71,7 +71,8 @@ namespace uni_book_webstore.Controllers
                     BookData = bookData,
                     User = user,
                     Price = post.Price,
-                    ReleaseYear = post.ReleaseYear
+                    ReleaseYear = post.ReleaseYear,
+                    PostId = post.Id
                 },
                 RecommendedItems = recommendedBookCards
             };

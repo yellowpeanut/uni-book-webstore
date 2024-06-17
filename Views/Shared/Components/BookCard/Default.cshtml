@@ -12,17 +12,23 @@
 {
     <div class="d-inline-flex w-100 border-bottom border-1 mb-4">
         <div class="">
+            <a href="/posts/details/@Model.PostId">
             <img src="@bookData.Book.ImageURL" width="160" height="240" alt="">
+            </a>
         </div>
         <div class="p-5 d-flex flex-column pt-0">
             <div>
                 @if (bookData.Book.Rating != null)
                 {
-                    <p class="text-primary">@bookData.Book.Title | @bookData.Book.Rating / 10</p>
+                    <a href="/posts/details/@Model.PostId">
+                    <p class="text-primary">@bookData.Book.Title | ★★★★★ @bookData.Book.Rating / 10</p>
+                    </a>
                 }
                 else
                 {
+                    <a href="/posts/details/@Model.PostId">
                     <p class="text-primary">@bookData.Book.Title</p>
+                    </a>
                 }
             </div>
             <div>

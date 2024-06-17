@@ -1,4 +1,4 @@
-@model IEnumerable<Application.Models.BookData>
+@model IEnumerable<Application.ViewModels.BookCardViewModel>
 
 @using Microsoft.AspNetCore.Identity;
 @using Application.Models;
@@ -12,8 +12,8 @@
 @if (SignInManager.IsSignedIn(User))
 {
     <h2 class="mb-5">Купленные книги</h2>
-    @await Component.InvokeAsync("BookList", new{
-        bookList = Model,
+    @await Component.InvokeAsync("BookList", new {
+        model = @Model,
         mode = Application.Data.Enums.BookCardModes.Rate
-    })
+        })
 }

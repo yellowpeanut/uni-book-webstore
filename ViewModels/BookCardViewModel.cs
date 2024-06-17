@@ -12,5 +12,7 @@ namespace Application.ViewModels
         [Required]
         public uint Price { get; set; }
         public ushort ReleaseYear { get; set; }
+        [Required]
+        public ulong PostId { get; set; }
     }
 }

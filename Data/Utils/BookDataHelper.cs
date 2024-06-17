@@ -31,7 +31,8 @@ namespace Application.Data.Utils
                     BookData = bookData.Where(b => b.Book.Id == post.BookId).First(),
                     User = users.Where(u => u.Id == post.UserId).First(),
                     Price = pt.Price,
-                    ReleaseYear = pt.ReleaseYear
+                    ReleaseYear = pt.ReleaseYear,
+                    PostId = pt.Id
                 });
             }
             return entities;

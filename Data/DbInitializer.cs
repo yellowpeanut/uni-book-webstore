@@ -190,6 +190,52 @@ namespace Application.Data
 
                 }
 
+                // USER ITEMS IN INVENTORY AND CART //
+                var userCartService = serviceScope.ServiceProvider.GetService<UserCartService>();
+                var userInventoryService = serviceScope.ServiceProvider.GetService<UserInventoryService>();
+                var cartItemService = serviceScope.ServiceProvider.GetService<CartItemService>();
+                var inventoryItemService = serviceScope.ServiceProvider.GetService<InventoryItemService>();
+                if ((await cartItemService.GetByCartIdAsync(
+                    (await userCartService.GetByUserIdAsync(
+                        (await userManager.FindByEmailAsync(userList.First().Email)).Id
+                        )).Id
+                    )).Count() < 1)
+                {
+                    var bookService = serviceScope.ServiceProvider.GetService<BookService>();
+                    var bookList = await bookService.GetAllAsync();
+                    foreach (var u in userList)
+                    {
+                        var currentUser = await userManager.FindByEmailAsync(u.Email);
+                        if (currentUser != null)
+                        {
+                            var userCart = await userCartService.GetByUserIdAsync(currentUser.Id);
+                            var bookChunk = bookList.OrderBy(x => rnd.Next()).Take(rnd.Next(3, 15));
+                            foreach (var book in bookChunk)
+                            {
+                                var cartItem = new CartItem()
+                                {
+                                    CartId = userCart.Id,
+                                    BookId = book.Id,
+                                    Quantity = 1
+                                };
+                                await cartItemService.AddAsync(cartItem);
+                            }
+                            var userInventory = await userInventoryService.GetByUserIdAsync(currentUser.Id);
+                            bookChunk = bookList.OrderBy(x => rnd.Next()).Take(rnd.Next(3, 15));
+                            foreach (var book in bookChunk)
+                            {
+                                var inventoryItem = new InventoryItem()
+                                {
+                                    InventoryId = userCart.Id,
+                                    BookId = book.Id,
+                                    Quantity = 1
+                                };
+                                await inventoryItemService.AddAsync(inventoryItem);
+                            }
+                        }
+                    }
+                }
+
             }
         }
     }

@@ -1,4 +1,5 @@
-﻿using Application.Data.Enums;
+﻿using Application.Data;
+using Application.Data.Enums;
 using Application.Data.Services;
 using Application.Models;
 using Application.ViewModels;
@@ -11,6 +12,7 @@ namespace uni_book_webstore.Controllers
     public class UserController : Controller
     {
         public readonly UserService _userService;
+        public readonly ApplicationContext _context;
         public readonly SignInManager<User> _signInManager;
         public readonly UserManager<User> _userManager;
         public readonly UserInventoryService _userInventoryService;
@@ -20,6 +22,7 @@ namespace uni_book_webstore.Controllers
         public readonly BookDataService _bookDataService;
 
         public UserController(UserService service,
+        ApplicationContext context,
         UserInventoryService userInventoryService,
         InventoryItemService inventoryItemService,
         UserCartService userCartService,
@@ -28,6 +31,7 @@ namespace uni_book_webstore.Controllers
         SignInManager<User> signInManager, UserManager<User> userManager)
         {
             _userService = service;
+            _context = context;
             _signInManager = signInManager;
             _userManager = userManager;
             _userInventoryService = userInventoryService;
@@ -148,26 +152,30 @@ namespace uni_book_webstore.Controllers
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> InventoryAsync()
+        public async Task<IActionResult> Inventory()
         {
             User user = await _userManager.GetUserAsync(User);
             UserInventory inventory = await _userInventoryService.GetByUserIdAsync(user.Id);
             var bookIds = (await _inventoryItemService.GetByInventoryIdAsync(inventory.Id))
                 .Select(e => e.BookId).ToList();
             var bookData = await _bookDataService.GetByIdsAsync(bookIds);
-            return View(bookData);
+            var entities = Application.Data.Utils.BookDataHelper.StickBookDataToBookCardVM(_context, bookData);
+            
+            return View(entities);
         }
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> CartAsync()
+        public async Task<IActionResult> Cart()
         {
             User user = await _userManager.GetUserAsync(User);
             UserCart cart = await _userCartService.GetByUserIdAsync(user.Id);
             var bookIds = (await _cartItemService.GetByCartIdAsync(cart.Id))
                 .Select(e => e.BookId).ToList();
             var bookData = await _bookDataService.GetByIdsAsync(bookIds);
-            return View(bookData);
+            var entities = Application.Data.Utils.BookDataHelper.StickBookDataToBookCardVM(_context, bookData);
+            
+            return View(entities);
         }
 
 

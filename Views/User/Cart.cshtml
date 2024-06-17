@@ -1,4 +1,4 @@
-@model IEnumerable<Application.Models.BookData>
+@model IEnumerable<Application.ViewModels.BookCardViewModel>
 
 @using Microsoft.AspNetCore.Identity;
 @using Application.Models;
@@ -13,7 +13,7 @@
 {
     <h2 class="mb-5">Ваши товары</h2>
     @await Component.InvokeAsync("BookList", new{
-        bookList = Model,
+        model = Model,
         mode = Application.Data.Enums.BookCardModes.Remove
     })
     <button class="btn btn-success" asp-action="Buy">Купить все</button>
